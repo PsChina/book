@@ -1,0 +1,548 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+  <head>
+    <title>Symbol | ECMAScript 6入门</title>
+    <meta name="description" content=""/>
+    <meta name="generator" content="GitBook 2.6.7"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="page_styles.css" rel="stylesheet" type="text/css"/>
+</head>
+  <body class="dir">
+        
+        
+<div class="page">
+    
+        <h1 class="book-chapter" id="calibre_toc_10">Symbol</h1>
+        
+            <div class="section" id="section-">
+            
+                <h1 id="symbol" class="calibre6">Symbol</h1>
+<h2 id="概述" class="calibre18">概述</h2>
+<p class="calibre7">ES5的对象属性名都是字符串，这容易造成属性名的冲突。比如，你使用了一个他人提供的对象，但又想为这个对象添加新的方法（mixin模式），新方法的名字就有可能与现有方法产生冲突。如果有一种机制，保证每个属性的名字都是独一无二的就好了，这样就从根本上防止属性名的冲突。这就是ES6引入Symbol的原因。</p>
+<p class="calibre7">ES6引入了一种新的原始数据类型Symbol，表示独一无二的值。它是JavaScript语言的第七种数据类型，前六种是：Undefined、Null、布尔值（Boolean）、字符串（String）、数值（Number）、对象（Object）。</p>
+<p class="calibre7">Symbol值通过<code class="pcalibre3 pcalibre4 calibre14">Symbol</code>函数生成。这就是说，对象的属性名现在可以有两种类型，一种是原来就有的字符串，另一种就是新增的Symbol类型。凡是属性名属于Symbol类型，就都是独一无二的，可以保证不会与其他属性名产生冲突。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-keyword">let</span> s = <span class="hljs-built_in">Symbol</span>();
+
+<span class="hljs-keyword">typeof</span> s
+<span class="hljs-comment">// "symbol"</span>
+</code></pre>
+<p class="calibre7">上面代码中，变量<code class="pcalibre3 pcalibre4 calibre14">s</code>就是一个独一无二的值。<code class="pcalibre3 pcalibre4 calibre14">typeof</code>运算符的结果，表明变量<code class="pcalibre3 pcalibre4 calibre14">s</code>是Symbol数据类型，而不是字符串之类的其他类型。</p>
+<p class="calibre7">注意，<code class="pcalibre3 pcalibre4 calibre14">Symbol</code>函数前不能使用<code class="pcalibre3 pcalibre4 calibre14">new</code>命令，否则会报错。这是因为生成的Symbol是一个原始类型的值，不是对象。也就是说，由于Symbol值不是对象，所以不能添加属性。基本上，它是一种类似于字符串的数据类型。</p>
+<p class="calibre7"><code class="pcalibre3 pcalibre4 calibre14">Symbol</code>函数可以接受一个字符串作为参数，表示对Symbol实例的描述，主要是为了在控制台显示，或者转为字符串时，比较容易区分。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-keyword">var</span> s1 = <span class="hljs-built_in">Symbol</span>(<span class="hljs-string">'foo'</span>);
+<span class="hljs-keyword">var</span> s2 = <span class="hljs-built_in">Symbol</span>(<span class="hljs-string">'bar'</span>);
+
+s1 <span class="hljs-comment">// Symbol(foo)</span>
+s2 <span class="hljs-comment">// Symbol(bar)</span>
+
+s1.toString() <span class="hljs-comment">// "Symbol(foo)"</span>
+s2.toString() <span class="hljs-comment">// "Symbol(bar)"</span>
+</code></pre>
+<p class="calibre7">上面代码中，<code class="pcalibre3 pcalibre4 calibre14">s1</code>和<code class="pcalibre3 pcalibre4 calibre14">s2</code>是两个Symbol值。如果不加参数，它们在控制台的输出都是<code class="pcalibre3 pcalibre4 calibre14">Symbol()</code>，不利于区分。有了参数以后，就等于为它们加上了描述，输出的时候就能够分清，到底是哪一个值。</p>
+<p class="calibre7">注意，<code class="pcalibre3 pcalibre4 calibre14">Symbol</code>函数的参数只是表示对当前Symbol值的描述，因此相同参数的<code class="pcalibre3 pcalibre4 calibre14">Symbol</code>函数的返回值是不相等的。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-comment">// 没有参数的情况</span>
+<span class="hljs-keyword">var</span> s1 = <span class="hljs-built_in">Symbol</span>();
+<span class="hljs-keyword">var</span> s2 = <span class="hljs-built_in">Symbol</span>();
+
+s1 === s2 <span class="hljs-comment">// false</span>
+
+<span class="hljs-comment">// 有参数的情况</span>
+<span class="hljs-keyword">var</span> s1 = <span class="hljs-built_in">Symbol</span>(<span class="hljs-string">"foo"</span>);
+<span class="hljs-keyword">var</span> s2 = <span class="hljs-built_in">Symbol</span>(<span class="hljs-string">"foo"</span>);
+
+s1 === s2 <span class="hljs-comment">// false</span>
+</code></pre>
+<p class="calibre7">上面代码中，<code class="pcalibre3 pcalibre4 calibre14">s1</code>和<code class="pcalibre3 pcalibre4 calibre14">s2</code>都是<code class="pcalibre3 pcalibre4 calibre14">Symbol</code>函数的返回值，而且参数相同，但是它们是不相等的。</p>
+<p class="calibre7">Symbol值不能与其他类型的值进行运算，会报错。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-keyword">var</span> sym = <span class="hljs-built_in">Symbol</span>(<span class="hljs-string">'My symbol'</span>);
+
+<span class="hljs-string">"your symbol is "</span> + sym
+<span class="hljs-comment">// TypeError: can't convert symbol to string</span>
+<span class="hljs-string">`your symbol is <span class="hljs-operator">${sym}</span>`</span>
+<span class="hljs-comment">// TypeError: can't convert symbol to string</span>
+</code></pre>
+<p class="calibre7">但是，Symbol值可以显式转为字符串。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-keyword">var</span> sym = <span class="hljs-built_in">Symbol</span>(<span class="hljs-string">'My symbol'</span>);
+
+<span class="hljs-built_in">String</span>(sym) <span class="hljs-comment">// 'Symbol(My symbol)'</span>
+sym.toString() <span class="hljs-comment">// 'Symbol(My symbol)'</span>
+</code></pre>
+<p class="calibre7">另外，Symbol值也可以转为布尔值，但是不能转为数值。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-keyword">var</span> sym = <span class="hljs-built_in">Symbol</span>();
+<span class="hljs-built_in">Boolean</span>(sym) <span class="hljs-comment">// true</span>
+!sym  <span class="hljs-comment">// false</span>
+
+<span class="hljs-keyword">if</span> (sym) {
+  <span class="hljs-comment">// ...</span>
+}
+
+<span class="hljs-built_in">Number</span>(sym) <span class="hljs-comment">// TypeError</span>
+sym + <span class="hljs-built_in">2</span> <span class="hljs-comment">// TypeError</span>
+</code></pre>
+<h2 id="作为属性名的symbol" class="calibre13">作为属性名的Symbol</h2>
+<p class="calibre7">由于每一个Symbol值都是不相等的，这意味着Symbol值可以作为标识符，用于对象的属性名，就能保证不会出现同名的属性。这对于一个对象由多个模块构成的情况非常有用，能防止某一个键被不小心改写或覆盖。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-keyword">var</span> mySymbol = <span class="hljs-built_in">Symbol</span>();
+
+<span class="hljs-comment">// 第一种写法</span>
+<span class="hljs-keyword">var</span> a = {};
+a[mySymbol] = <span class="hljs-string">'Hello!'</span>;
+
+<span class="hljs-comment">// 第二种写法</span>
+<span class="hljs-keyword">var</span> a = {
+  [mySymbol]: <span class="hljs-string">'Hello!'</span>
+};
+
+<span class="hljs-comment">// 第三种写法</span>
+<span class="hljs-keyword">var</span> a = {};
+<span class="hljs-built_in">Object</span>.defineProperty(a, mySymbol, { value: <span class="hljs-string">'Hello!'</span> });
+
+<span class="hljs-comment">// 以上写法都得到同样结果</span>
+a[mySymbol] <span class="hljs-comment">// "Hello!"</span>
+</code></pre>
+<p class="calibre7">上面代码通过方括号结构和<code class="pcalibre3 pcalibre4 calibre14">Object.defineProperty</code>，将对象的属性名指定为一个Symbol值。</p>
+<p class="calibre7">注意，Symbol值作为对象属性名时，不能用点运算符。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-keyword">var</span> mySymbol = <span class="hljs-built_in">Symbol</span>();
+<span class="hljs-keyword">var</span> a = {};
+
+a.mySymbol = <span class="hljs-string">'Hello!'</span>;
+a[mySymbol] <span class="hljs-comment">// undefined</span>
+a[<span class="hljs-string">'mySymbol'</span>] <span class="hljs-comment">// "Hello!"</span>
+</code></pre>
+<p class="calibre7">上面代码中，因为点运算符后面总是字符串，所以不会读取<code class="pcalibre3 pcalibre4 calibre14">mySymbol</code>作为标识名所指代的那个值，导致<code class="pcalibre3 pcalibre4 calibre14">a</code>的属性名实际上是一个字符串，而不是一个Symbol值。</p>
+<p class="calibre7">同理，在对象的内部，使用Symbol值定义属性时，Symbol值必须放在方括号之中。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-keyword">let</span> s = <span class="hljs-built_in">Symbol</span>();
+
+<span class="hljs-keyword">let</span> obj = {
+  [s]: <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-built_in">arg</span>) </span>{ ... }
+};
+
+obj[s](<span class="hljs-built_in">123</span>);
+</code></pre>
+<p class="calibre7">上面代码中，如果<code class="pcalibre3 pcalibre4 calibre14">s</code>不放在方括号中，该属性的键名就是字符串<code class="pcalibre3 pcalibre4 calibre14">s</code>，而不是<code class="pcalibre3 pcalibre4 calibre14">s</code>所代表的那个Symbol值。</p>
+<p class="calibre7">采用增强的对象写法，上面代码的<code class="pcalibre3 pcalibre4 calibre14">obj</code>对象可以写得更简洁一些。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-keyword">let</span> obj = {
+  [s](arg) { ... }
+};
+</code></pre>
+<p class="calibre7">Symbol类型还可以用于定义一组常量，保证这组常量的值都是不相等的。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6">log.levels = {
+  DEBUG: <span class="hljs-built_in">Symbol</span>(<span class="hljs-string">'debug'</span>),
+  INFO: <span class="hljs-built_in">Symbol</span>(<span class="hljs-string">'info'</span>),
+  WARN: <span class="hljs-built_in">Symbol</span>(<span class="hljs-string">'warn'</span>)
+};
+log(log.levels.DEBUG, <span class="hljs-string">'debug message'</span>);
+log(log.levels.INFO, <span class="hljs-string">'info message'</span>);
+</code></pre>
+<p class="calibre7">下面是另外一个例子。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-keyword">const</span> COLOR_RED    = <span class="hljs-built_in">Symbol</span>();
+<span class="hljs-keyword">const</span> COLOR_GREEN  = <span class="hljs-built_in">Symbol</span>();
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-comment">getComplement</span>(<span class="hljs-built_in">color</span>) </span>{
+  <span class="hljs-keyword">switch</span> (color) {
+    <span class="hljs-keyword">case</span> COLOR_RED:
+      <span class="hljs-keyword">return</span> COLOR_GREEN;
+    <span class="hljs-keyword">case</span> COLOR_GREEN:
+      <span class="hljs-keyword">return</span> COLOR_RED;
+    <span class="hljs-keyword">default</span>:
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'Undefined color'</span>);
+    }
+}
+</code></pre>
+<p class="calibre7">常量使用Symbol值最大的好处，就是其他任何值都不可能有相同的值了，因此可以保证上面的<code class="pcalibre3 pcalibre4 calibre14">switch</code>语句会按设计的方式工作。</p>
+<p class="calibre7">还有一点需要注意，Symbol值作为属性名时，该属性还是公开属性，不是私有属性。</p>
+<h2 id="实例：消除魔术字符串" class="calibre13">实例：消除魔术字符串</h2>
+<p class="calibre7">魔术字符串指的是，在代码之中多次出现、与代码形成强耦合的某一个具体的字符串或者数值。风格良好的代码，应该尽量消除魔术字符串，该由含义清晰的变量代替。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-comment">getArea</span>(<span class="hljs-built_in">shape, options</span>) </span>{
+  <span class="hljs-keyword">var</span> area = <span class="hljs-built_in">0</span>;
+
+  <span class="hljs-keyword">switch</span> (shape) {
+    <span class="hljs-keyword">case</span> <span class="hljs-string">'Triangle'</span>: <span class="hljs-comment">// 魔术字符串</span>
+      area = <span class="hljs-built_in">.5</span> * options.width * options.height;
+      <span class="hljs-keyword">break</span>;
+    <span class="hljs-comment">/* ... more code ... */</span>
+  }
+
+  <span class="hljs-keyword">return</span> area;
+}
+
+getArea(<span class="hljs-string">'Triangle'</span>, { width: <span class="hljs-built_in">100</span>, height: <span class="hljs-built_in">100</span> }); <span class="hljs-comment">// 魔术字符串</span>
+</code></pre>
+<p class="calibre7">上面代码中，字符串“Triangle”就是一个魔术字符串。它多次出现，与代码形成“强耦合”，不利于将来的修改和维护。</p>
+<p class="calibre7">常用的消除魔术字符串的方法，就是把它写成一个变量。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-keyword">var</span> shapeType = {
+  triangle: <span class="hljs-string">'Triangle'</span>
+};
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-comment">getArea</span>(<span class="hljs-built_in">shape, options</span>) </span>{
+  <span class="hljs-keyword">var</span> area = <span class="hljs-built_in">0</span>;
+  <span class="hljs-keyword">switch</span> (shape) {
+    <span class="hljs-keyword">case</span> shapeType.triangle:
+      area = <span class="hljs-built_in">.5</span> * options.width * options.height;
+      <span class="hljs-keyword">break</span>;
+  }
+  <span class="hljs-keyword">return</span> area;
+}
+
+getArea(shapeType.triangle, { width: <span class="hljs-built_in">100</span>, height: <span class="hljs-built_in">100</span> });
+</code></pre>
+<p class="calibre7">上面代码中，我们把“Triangle”写成<code class="pcalibre3 pcalibre4 calibre14">shapeType</code>对象的<code class="pcalibre3 pcalibre4 calibre14">triangle</code>属性，这样就消除了强耦合。</p>
+<p class="calibre7">如果仔细分析，可以发现<code class="pcalibre3 pcalibre4 calibre14">shapeType.triangle</code>等于哪个值并不重要，只要确保不会跟其他<code class="pcalibre3 pcalibre4 calibre14">shapeType</code>属性的值冲突即可。因此，这里就很适合改用Symbol值。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-keyword">const</span> shapeType = {
+  triangle: <span class="hljs-built_in">Symbol</span>()
+};
+</code></pre>
+<p class="calibre7">上面代码中，除了将<code class="pcalibre3 pcalibre4 calibre14">shapeType.triangle</code>的值设为一个Symbol，其他地方都不用修改。</p>
+<h2 id="属性名的遍历" class="calibre13">属性名的遍历</h2>
+<p class="calibre7">Symbol作为属性名，该属性不会出现在<code class="pcalibre3 pcalibre4 calibre14">for...in</code>、<code class="pcalibre3 pcalibre4 calibre14">for...of</code>循环中，也不会被<code class="pcalibre3 pcalibre4 calibre14">Object.keys()</code>、<code class="pcalibre3 pcalibre4 calibre14">Object.getOwnPropertyNames()</code>返回。但是，它也不是私有属性，有一个<code class="pcalibre3 pcalibre4 calibre14">Object.getOwnPropertySymbols</code>方法，可以获取指定对象的所有Symbol属性名。</p>
+<p class="calibre7"><code class="pcalibre3 pcalibre4 calibre14">Object.getOwnPropertySymbols</code>方法返回一个数组，成员是当前对象的所有用作属性名的Symbol值。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-keyword">var</span> obj = {};
+<span class="hljs-keyword">var</span> a = <span class="hljs-built_in">Symbol</span>(<span class="hljs-string">'a'</span>);
+<span class="hljs-keyword">var</span> b = <span class="hljs-built_in">Symbol</span>.for(<span class="hljs-string">'b'</span>);
+
+obj[a] = <span class="hljs-string">'Hello'</span>;
+obj[b] = <span class="hljs-string">'World'</span>;
+
+<span class="hljs-keyword">var</span> objectSymbols = <span class="hljs-built_in">Object</span>.getOwnPropertySymbols(obj);
+
+objectSymbols
+<span class="hljs-comment">// [Symbol(a), Symbol(b)]</span>
+</code></pre>
+<p class="calibre7">下面是另一个例子，<code class="pcalibre3 pcalibre4 calibre14">Object.getOwnPropertySymbols</code>方法与<code class="pcalibre3 pcalibre4 calibre14">for...in</code>循环、<code class="pcalibre3 pcalibre4 calibre14">Object.getOwnPropertyNames</code>方法进行对比的例子。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-keyword">var</span> obj = {};
+
+<span class="hljs-keyword">var</span> foo = <span class="hljs-built_in">Symbol</span>(<span class="hljs-string">"foo"</span>);
+
+<span class="hljs-built_in">Object</span>.defineProperty(obj, foo, {
+  value: <span class="hljs-string">"foobar"</span>,
+});
+
+<span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i <span class="hljs-keyword">in</span> obj) {
+  <span class="hljs-built_in">console</span>.log(i); <span class="hljs-comment">// 无输出</span>
+}
+
+<span class="hljs-built_in">Object</span>.getOwnPropertyNames(obj)
+<span class="hljs-comment">// []</span>
+
+<span class="hljs-built_in">Object</span>.getOwnPropertySymbols(obj)
+<span class="hljs-comment">// [Symbol(foo)]</span>
+</code></pre>
+<p class="calibre7">上面代码中，使用<code class="pcalibre3 pcalibre4 calibre14">Object.getOwnPropertyNames</code>方法得不到<code class="pcalibre3 pcalibre4 calibre14">Symbol</code>属性名，需要使用<code class="pcalibre3 pcalibre4 calibre14">Object.getOwnPropertySymbols</code>方法。</p>
+<p class="calibre7">另一个新的API，<code class="pcalibre3 pcalibre4 calibre14">Reflect.ownKeys</code>方法可以返回所有类型的键名，包括常规键名和Symbol键名。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-keyword">let</span> obj = {
+  [<span class="hljs-built_in">Symbol</span>(<span class="hljs-string">'my_key'</span>)]: <span class="hljs-built_in">1</span>,
+  enum: <span class="hljs-built_in">2</span>,
+  nonEnum: <span class="hljs-built_in">3</span>
+};
+
+<span class="hljs-built_in">Reflect</span>.ownKeys(obj)
+<span class="hljs-comment">// [Symbol(my_key), 'enum', 'nonEnum']</span>
+</code></pre>
+<p class="calibre7">由于以Symbol值作为名称的属性，不会被常规方法遍历得到。我们可以利用这个特性，为对象定义一些非私有的、但又希望只用于内部的方法。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-keyword">var</span> size = <span class="hljs-built_in">Symbol</span>(<span class="hljs-string">'size'</span>);
+
+<span class="hljs-operator"><span class="hljs-keyword">class</span> <span class="hljs-comment">Collection</span> </span>{
+  constructor() {
+    <span class="hljs-keyword">this</span>[size] = <span class="hljs-built_in">0</span>;
+  }
+
+  add(item) {
+    <span class="hljs-keyword">this</span>[<span class="hljs-keyword">this</span>[size]] = item;
+    <span class="hljs-keyword">this</span>[size]++;
+  }
+
+  static sizeOf(instance) {
+    <span class="hljs-keyword">return</span> instance[size];
+  }
+}
+
+<span class="hljs-keyword">var</span> x = <span class="hljs-keyword">new</span> Collection();
+Collection.sizeOf(x) <span class="hljs-comment">// 0</span>
+
+x.add(<span class="hljs-string">'foo'</span>);
+Collection.sizeOf(x) <span class="hljs-comment">// 1</span>
+
+<span class="hljs-built_in">Object</span>.keys(x) <span class="hljs-comment">// ['0']</span>
+<span class="hljs-built_in">Object</span>.getOwnPropertyNames(x) <span class="hljs-comment">// ['0']</span>
+<span class="hljs-built_in">Object</span>.getOwnPropertySymbols(x) <span class="hljs-comment">// [Symbol(size)]</span>
+</code></pre>
+<p class="calibre7">上面代码中，对象x的size属性是一个Symbol值，所以<code class="pcalibre3 pcalibre4 calibre14">Object.keys(x)</code>、<code class="pcalibre3 pcalibre4 calibre14">Object.getOwnPropertyNames(x)</code>都无法获取它。这就造成了一种非私有的内部方法的效果。</p>
+<h2 id="symbolfor，symbolkeyfor" class="calibre13">Symbol.for()，Symbol.keyFor()</h2>
+<p class="calibre7">有时，我们希望重新使用同一个Symbol值，<code class="pcalibre3 pcalibre4 calibre14">Symbol.for</code>方法可以做到这一点。它接受一个字符串作为参数，然后搜索有没有以该参数作为名称的Symbol值。如果有，就返回这个Symbol值，否则就新建并返回一个以该字符串为名称的Symbol值。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-keyword">var</span> s1 = <span class="hljs-built_in">Symbol</span>.for(<span class="hljs-string">'foo'</span>);
+<span class="hljs-keyword">var</span> s2 = <span class="hljs-built_in">Symbol</span>.for(<span class="hljs-string">'foo'</span>);
+
+s1 === s2 <span class="hljs-comment">// true</span>
+</code></pre>
+<p class="calibre7">上面代码中，s1和s2都是Symbol值，但是它们都是同样参数的<code class="pcalibre3 pcalibre4 calibre14">Symbol.for</code>方法生成的，所以实际上是同一个值。</p>
+<p class="calibre7"><code class="pcalibre3 pcalibre4 calibre14">Symbol.for()</code>与<code class="pcalibre3 pcalibre4 calibre14">Symbol()</code>这两种写法，都会生成新的Symbol。它们的区别是，前者会被登记在全局环境中供搜索，后者不会。<code class="pcalibre3 pcalibre4 calibre14">Symbol.for()</code>不会每次调用就返回一个新的Symbol类型的值，而是会先检查给定的key是否已经存在，如果不存在才会新建一个值。比如，如果你调用<code class="pcalibre3 pcalibre4 calibre14">Symbol.for("cat")</code>30次，每次都会返回同一个Symbol值，但是调用<code class="pcalibre3 pcalibre4 calibre14">Symbol("cat")</code>30次，会返回30个不同的Symbol值。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-built_in">Symbol</span>.for(<span class="hljs-string">"bar"</span>) === <span class="hljs-built_in">Symbol</span>.for(<span class="hljs-string">"bar"</span>)
+<span class="hljs-comment">// true</span>
+
+<span class="hljs-built_in">Symbol</span>(<span class="hljs-string">"bar"</span>) === <span class="hljs-built_in">Symbol</span>(<span class="hljs-string">"bar"</span>)
+<span class="hljs-comment">// false</span>
+</code></pre>
+<p class="calibre7">上面代码中，由于<code class="pcalibre3 pcalibre4 calibre14">Symbol()</code>写法没有登记机制，所以每次调用都会返回一个不同的值。</p>
+<p class="calibre7">Symbol.keyFor方法返回一个已登记的Symbol类型值的key。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-keyword">var</span> s1 = <span class="hljs-built_in">Symbol</span>.for(<span class="hljs-string">"foo"</span>);
+<span class="hljs-built_in">Symbol</span>.keyFor(s1) <span class="hljs-comment">// "foo"</span>
+
+<span class="hljs-keyword">var</span> s2 = <span class="hljs-built_in">Symbol</span>(<span class="hljs-string">"foo"</span>);
+<span class="hljs-built_in">Symbol</span>.keyFor(s2) <span class="hljs-comment">// undefined</span>
+</code></pre>
+<p class="calibre7">上面代码中，变量<code class="pcalibre3 pcalibre4 calibre14">s2</code>属于未登记的Symbol值，所以返回<code class="pcalibre3 pcalibre4 calibre14">undefined</code>。</p>
+<p class="calibre7">需要注意的是，<code class="pcalibre3 pcalibre4 calibre14">Symbol.for</code>为Symbol值登记的名字，是全局环境的，可以在不同的iframe或service worker中取到同一个值。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6">iframe = <span class="hljs-built_in">document</span>.createElement(<span class="hljs-string">'iframe'</span>);
+iframe.src = <span class="hljs-built_in">String</span>(<span class="hljs-built_in">window</span>.location);
+<span class="hljs-built_in">document</span>.body.appendChild(iframe);
+
+iframe.contentWindow.Symbol.for(<span class="hljs-string">'foo'</span>) === <span class="hljs-built_in">Symbol</span>.for(<span class="hljs-string">'foo'</span>)
+<span class="hljs-comment">// true</span>
+</code></pre>
+<p class="calibre7">上面代码中，iframe窗口生成的Symbol值，可以在主页面得到。</p>
+<h2 id="内置的symbol值" class="calibre13">内置的Symbol值</h2>
+<p class="calibre7">除了定义自己使用的Symbol值以外，ES6还提供了11个内置的Symbol值，指向语言内部使用的方法。</p>
+<h3 id="symbolhasinstance" class="calibre12">Symbol.hasInstance</h3>
+<p class="calibre7">对象的<code class="pcalibre3 pcalibre4 calibre14">Symbol.hasInstance</code>属性，指向一个内部方法。当其他对象使用<code class="pcalibre3 pcalibre4 calibre14">instanceof</code>运算符，判断是否为该对象的实例时，会调用这个方法。比如，<code class="pcalibre3 pcalibre4 calibre14">foo instanceof Foo</code>在语言内部，实际调用的是<code class="pcalibre3 pcalibre4 calibre14">Foo[Symbol.hasInstance](foo)</code>。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-operator"><span class="hljs-keyword">class</span> <span class="hljs-comment">MyClass</span> </span>{
+  [<span class="hljs-built_in">Symbol</span>.hasInstance](foo) {
+    <span class="hljs-keyword">return</span> foo <span class="hljs-keyword">instanceof</span> <span class="hljs-built_in">Array</span>;
+  }
+}
+
+[<span class="hljs-built_in">1</span>, <span class="hljs-built_in">2</span>, <span class="hljs-built_in">3</span>] <span class="hljs-keyword">instanceof</span> MyClass() <span class="hljs-comment">// true</span>
+</code></pre>
+<h3 id="symbolisconcatspreadable" class="calibre12">Symbol.isConcatSpreadable</h3>
+<p class="calibre7">对象的<code class="pcalibre3 pcalibre4 calibre14">Symbol.isConcatSpreadable</code>属性等于一个布尔值，表示该对象使用<code class="pcalibre3 pcalibre4 calibre14">Array.prototype.concat()</code>时，是否可以展开。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-keyword">let</span> arr1 = [<span class="hljs-string">'c'</span>, <span class="hljs-string">'d'</span>];
+[<span class="hljs-string">'a'</span>, <span class="hljs-string">'b'</span>].concat(arr1, <span class="hljs-string">'e'</span>) <span class="hljs-comment">// ['a', 'b', 'c', 'd', 'e']</span>
+
+<span class="hljs-keyword">let</span> arr2 = [<span class="hljs-string">'c'</span>, <span class="hljs-string">'d'</span>];
+arr2[<span class="hljs-built_in">Symbol</span>.isConcatSpreadable] = <span class="hljs-built_in">false</span>;
+[<span class="hljs-string">'a'</span>, <span class="hljs-string">'b'</span>].concat(arr2, <span class="hljs-string">'e'</span>) <span class="hljs-comment">// ['a', 'b', ['c','d'], 'e']</span>
+</code></pre>
+<p class="calibre7">上面代码说明，数组的<code class="pcalibre3 pcalibre4 calibre14">Symbol.isConcatSpreadable</code>属性默认为<code class="pcalibre3 pcalibre4 calibre14">true</code>，表示可以展开。</p>
+<p class="calibre7">类似数组的对象也可以展开，但它的<code class="pcalibre3 pcalibre4 calibre14">Symbol.isConcatSpreadable</code>属性默认为<code class="pcalibre3 pcalibre4 calibre14">false</code>，必须手动打开。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-keyword">let</span> obj = {length: <span class="hljs-built_in">2</span>, <span class="hljs-built_in">0</span>: <span class="hljs-string">'c'</span>, <span class="hljs-built_in">1</span>: <span class="hljs-string">'d'</span>};
+[<span class="hljs-string">'a'</span>, <span class="hljs-string">'b'</span>].concat(obj, <span class="hljs-string">'e'</span>) <span class="hljs-comment">// ['a', 'b', obj, 'e']</span>
+
+obj[<span class="hljs-built_in">Symbol</span>.isConcatSpreadable] = <span class="hljs-built_in">true</span>;
+[<span class="hljs-string">'a'</span>, <span class="hljs-string">'b'</span>].concat(obj, <span class="hljs-string">'e'</span>) <span class="hljs-comment">// ['a', 'b', 'c', 'd', 'e']</span>
+</code></pre>
+<p class="calibre7">对于一个类来说，<code class="pcalibre3 pcalibre4 calibre14">Symbol.isConcatSpreadable</code>属性必须写成一个返回布尔值的方法。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-operator"><span class="hljs-keyword">class</span> <span class="hljs-comment">A1</span> <span class="hljs-keyword">extends</span> <span class="hljs-comment">Array</span> </span>{
+  [<span class="hljs-built_in">Symbol</span>.isConcatSpreadable]() {
+    <span class="hljs-keyword">return</span> <span class="hljs-built_in">true</span>;
+  }
+}
+<span class="hljs-operator"><span class="hljs-keyword">class</span> <span class="hljs-comment">A2</span> <span class="hljs-keyword">extends</span> <span class="hljs-comment">Array</span> </span>{
+  [<span class="hljs-built_in">Symbol</span>.isConcatSpreadable]() {
+    <span class="hljs-keyword">return</span> <span class="hljs-built_in">false</span>;
+  }
+}
+<span class="hljs-keyword">let</span> a1 = <span class="hljs-keyword">new</span> A1();
+a1[<span class="hljs-built_in">0</span>] = <span class="hljs-built_in">3</span>;
+a1[<span class="hljs-built_in">1</span>] = <span class="hljs-built_in">4</span>;
+<span class="hljs-keyword">let</span> a2 = <span class="hljs-keyword">new</span> A2();
+a2[<span class="hljs-built_in">0</span>] = <span class="hljs-built_in">5</span>;
+a2[<span class="hljs-built_in">1</span>] = <span class="hljs-built_in">6</span>;
+[<span class="hljs-built_in">1</span>, <span class="hljs-built_in">2</span>].concat(a1).concat(a2)
+<span class="hljs-comment">// [1, 2, 3, 4, [5, 6]]</span>
+</code></pre>
+<p class="calibre7">上面代码中，类<code class="pcalibre3 pcalibre4 calibre14">A1</code>是可扩展的，类<code class="pcalibre3 pcalibre4 calibre14">A2</code>是不可扩展的，所以使用<code class="pcalibre3 pcalibre4 calibre14">concat</code>时有不一样的结果。</p>
+<h3 id="symbolspecies" class="calibre12">Symbol.species</h3>
+<p class="calibre7">对象的<code class="pcalibre3 pcalibre4 calibre14">Symbol.species</code>属性，指向一个方法。该对象作为构造函数创造实例时，会调用这个方法。即如果<code class="pcalibre3 pcalibre4 calibre14">this.constructor[Symbol.species]</code>存在，就会使用这个属性作为构造函数，来创造新的实例对象。</p>
+<p class="calibre7"><code class="pcalibre3 pcalibre4 calibre14">Symbol.species</code>属性默认的读取器如下。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6">static get [<span class="hljs-built_in">Symbol</span>.species]() {
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+}
+</code></pre>
+<h3 id="symbolmatch" class="calibre12">Symbol.match</h3>
+<p class="calibre7">对象的<code class="pcalibre3 pcalibre4 calibre14">Symbol.match</code>属性，指向一个函数。当执行<code class="pcalibre3 pcalibre4 calibre14">str.match(myObject)</code>时，如果该属性存在，会调用它，返回该方法的返回值。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-built_in">String</span>.prototype.match(regexp)
+<span class="hljs-comment">// 等同于</span>
+regexp[<span class="hljs-built_in">Symbol</span>.match](<span class="hljs-keyword">this</span>)
+
+<span class="hljs-operator"><span class="hljs-keyword">class</span> <span class="hljs-comment">MyMatcher</span> </span>{
+  [<span class="hljs-built_in">Symbol</span>.match](string) {
+    <span class="hljs-keyword">return</span> <span class="hljs-string">'hello world'</span>.indexOf(string);
+  }
+}
+
+<span class="hljs-string">'e'</span>.match(<span class="hljs-keyword">new</span> MyMatcher()) <span class="hljs-comment">// 1</span>
+</code></pre>
+<h3 id="symbolreplace" class="calibre12">Symbol.replace</h3>
+<p class="calibre7">对象的<code class="pcalibre3 pcalibre4 calibre14">Symbol.replace</code>属性，指向一个方法，当该对象被<code class="pcalibre3 pcalibre4 calibre14">String.prototype.replace</code>方法调用时，会返回该方法的返回值。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-built_in">String</span>.prototype.replace(searchValue, replaceValue)
+<span class="hljs-comment">// 等同于</span>
+searchValue[<span class="hljs-built_in">Symbol</span>.replace](<span class="hljs-keyword">this</span>, replaceValue)
+</code></pre>
+<h3 id="symbolsearch" class="calibre12">Symbol.search</h3>
+<p class="calibre7">对象的<code class="pcalibre3 pcalibre4 calibre14">Symbol.search</code>属性，指向一个方法，当该对象被<code class="pcalibre3 pcalibre4 calibre14">String.prototype.search</code>方法调用时，会返回该方法的返回值。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-built_in">String</span>.prototype.search(regexp)
+<span class="hljs-comment">// 等同于</span>
+regexp[<span class="hljs-built_in">Symbol</span>.search](<span class="hljs-keyword">this</span>)
+
+<span class="hljs-operator"><span class="hljs-keyword">class</span> <span class="hljs-comment">MySearch</span> </span>{
+  constructor(value) {
+    <span class="hljs-keyword">this</span>.value = value;
+  }
+  [<span class="hljs-built_in">Symbol</span>.search](string) {
+    <span class="hljs-keyword">return</span> string.indexOf(<span class="hljs-keyword">this</span>.value);
+  }
+}
+<span class="hljs-string">'foobar'</span>.search(<span class="hljs-keyword">new</span> MySearch(<span class="hljs-string">'foo'</span>)) <span class="hljs-comment">// 0</span>
+</code></pre>
+<h3 id="symbolsplit" class="calibre12">Symbol.split</h3>
+<p class="calibre7">对象的<code class="pcalibre3 pcalibre4 calibre14">Symbol.split</code>属性，指向一个方法，当该对象被<code class="pcalibre3 pcalibre4 calibre14">String.prototype.split</code>方法调用时，会返回该方法的返回值。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-built_in">String</span>.prototype.split(separator, limit)
+<span class="hljs-comment">// 等同于</span>
+separator[<span class="hljs-built_in">Symbol</span>.split](<span class="hljs-keyword">this</span>, limit)
+</code></pre>
+<h3 id="symboliterator" class="calibre12">Symbol.iterator</h3>
+<p class="calibre7">对象的<code class="pcalibre3 pcalibre4 calibre14">Symbol.iterator</code>属性，指向该对象的默认遍历器方法。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-keyword">var</span> myIterable = {};
+myIterable[<span class="hljs-built_in">Symbol</span>.iterator] = <span class="hljs-function"><span class="hljs-keyword">function</span>* (<span class="hljs-built_in"></span>) </span>{
+  <span class="hljs-keyword">yield</span> <span class="hljs-built_in">1</span>;
+  <span class="hljs-keyword">yield</span> <span class="hljs-built_in">2</span>;
+  <span class="hljs-keyword">yield</span> <span class="hljs-built_in">3</span>;
+};
+
+[...myIterable] <span class="hljs-comment">// [1, 2, 3]</span>
+</code></pre>
+<p class="calibre7">对象进行<code class="pcalibre3 pcalibre4 calibre14">for...of</code>循环时，会调用<code class="pcalibre3 pcalibre4 calibre14">Symbol.iterator</code>方法，返回该对象的默认遍历器，详细介绍参见《Iterator和for...of循环》一章。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-operator"><span class="hljs-keyword">class</span> <span class="hljs-comment">Collection</span> </span>{
+  *[<span class="hljs-built_in">Symbol</span>.iterator]() {
+    <span class="hljs-keyword">let</span> i = <span class="hljs-built_in">0</span>;
+    <span class="hljs-keyword">while</span>(<span class="hljs-keyword">this</span>[i] !== <span class="hljs-built_in">undefined</span>) {
+      <span class="hljs-keyword">yield</span> <span class="hljs-keyword">this</span>[i];
+      ++i;
+    }
+  }
+}
+
+<span class="hljs-keyword">let</span> myCollection = <span class="hljs-keyword">new</span> Collection();
+myCollection[<span class="hljs-built_in">0</span>] = <span class="hljs-built_in">1</span>;
+myCollection[<span class="hljs-built_in">1</span>] = <span class="hljs-built_in">2</span>;
+
+<span class="hljs-keyword">for</span>(<span class="hljs-keyword">let</span> value <span class="hljs-keyword">of</span> myCollection) {
+  <span class="hljs-built_in">console</span>.log(value);
+}
+<span class="hljs-comment">// 1</span>
+<span class="hljs-comment">// 2</span>
+</code></pre>
+<h3 id="symboltoprimitive" class="calibre12">Symbol.toPrimitive</h3>
+<p class="calibre7">对象的<code class="pcalibre3 pcalibre4 calibre14">Symbol.toPrimitive</code>属性，指向一个方法。该对象被转为原始类型的值时，会调用这个方法，返回该对象对应的原始类型值。</p>
+<p class="calibre7"><code class="pcalibre3 pcalibre4 calibre14">Symbol.toPrimitive</code>被调用时，会接受一个字符串参数，表示当前运算的模式，一共有三种模式。</p>
+<ul class="calibre10">
+<li class="calibre11">Number：该场合需要转成数值</li>
+<li class="calibre11">String：该场合需要转成字符串</li>
+<li class="calibre11">Default：该场合可以转成数值，也可以转成字符串</li>
+</ul>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-keyword">let</span> obj = {
+  [<span class="hljs-built_in">Symbol</span>.toPrimitive](hint) {
+    <span class="hljs-keyword">switch</span> (hint) {
+      <span class="hljs-keyword">case</span> <span class="hljs-string">'number'</span>:
+        <span class="hljs-keyword">return</span> <span class="hljs-built_in">123</span>;
+      <span class="hljs-keyword">case</span> <span class="hljs-string">'string'</span>:
+        <span class="hljs-keyword">return</span> <span class="hljs-string">'str'</span>;
+      <span class="hljs-keyword">case</span> <span class="hljs-string">'default'</span>:
+        <span class="hljs-keyword">return</span> <span class="hljs-string">'default'</span>;
+      <span class="hljs-keyword">default</span>:
+        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>();
+     }
+   }
+};
+
+<span class="hljs-built_in">2</span> * obj <span class="hljs-comment">// 246</span>
+<span class="hljs-built_in">3</span> + obj <span class="hljs-comment">// '3default'</span>
+obj === <span class="hljs-string">'default'</span> <span class="hljs-comment">// true</span>
+<span class="hljs-built_in">String</span>(obj) <span class="hljs-comment">// 'str'</span>
+</code></pre>
+<h3 id="symboltostringtag" class="calibre12">Symbol.toStringTag</h3>
+<p class="calibre7">对象的<code class="pcalibre3 pcalibre4 calibre14">Symbol.toStringTag</code>属性，指向一个方法。在该对象上面调用<code class="pcalibre3 pcalibre4 calibre14">Object.prototype.toString</code>方法时，如果这个属性存在，它的返回值会出现在<code class="pcalibre3 pcalibre4 calibre14">toString</code>方法返回的字符串之中，表示对象的类型。也就是说，这个属性可以用来定制<code class="pcalibre3 pcalibre4 calibre14">[object Object]</code>或<code class="pcalibre3 pcalibre4 calibre14">[object Array]</code>中object后面的那个字符串。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6">({[<span class="hljs-built_in">Symbol</span>.toStringTag]: <span class="hljs-string">'Foo'</span>}.toString())
+<span class="hljs-comment">// "[object Foo]"</span>
+
+<span class="hljs-operator"><span class="hljs-keyword">class</span> <span class="hljs-comment">Collection</span> </span>{
+  get [<span class="hljs-built_in">Symbol</span>.toStringTag]() {
+    <span class="hljs-keyword">return</span> <span class="hljs-string">'xxx'</span>;
+  }
+}
+<span class="hljs-keyword">var</span> x = <span class="hljs-keyword">new</span> Collection();
+<span class="hljs-built_in">Object</span>.prototype.toString.call(x) <span class="hljs-comment">// "[object xxx]"</span>
+</code></pre>
+<p class="calibre7">ES6新增内置对象的<code class="pcalibre3 pcalibre4 calibre14">Symbol.toStringTag</code>属性值如下。</p>
+<ul class="calibre10">
+<li class="calibre11"><code class="pcalibre3 pcalibre4 calibre14">JSON[Symbol.toStringTag]</code>：'JSON'</li>
+<li class="calibre11"><code class="pcalibre3 pcalibre4 calibre14">Math[Symbol.toStringTag]</code>：'Math'</li>
+<li class="calibre11">Module对象<code class="pcalibre3 pcalibre4 calibre14">M[Symbol.toStringTag]</code>：'Module'</li>
+<li class="calibre11"><code class="pcalibre3 pcalibre4 calibre14">ArrayBuffer.prototype[Symbol.toStringTag]</code>：'ArrayBuffer'</li>
+<li class="calibre11"><code class="pcalibre3 pcalibre4 calibre14">DataView.prototype[Symbol.toStringTag]</code>：'DataView'</li>
+<li class="calibre11"><code class="pcalibre3 pcalibre4 calibre14">Map.prototype[Symbol.toStringTag]</code>：'Map'</li>
+<li class="calibre11"><code class="pcalibre3 pcalibre4 calibre14">Promise.prototype[Symbol.toStringTag]</code>：'Promise'</li>
+<li class="calibre11"><code class="pcalibre3 pcalibre4 calibre14">Set.prototype[Symbol.toStringTag]</code>：'Set'</li>
+<li class="calibre11"><code class="pcalibre3 pcalibre4 calibre14">%TypedArray%.prototype[Symbol.toStringTag]</code>：'Uint8Array'等</li>
+<li class="calibre11"><code class="pcalibre3 pcalibre4 calibre14">WeakMap.prototype[Symbol.toStringTag]</code>：'WeakMap'</li>
+<li class="calibre11"><code class="pcalibre3 pcalibre4 calibre14">WeakSet.prototype[Symbol.toStringTag]</code>：'WeakSet'</li>
+<li class="calibre11"><code class="pcalibre3 pcalibre4 calibre14">%MapIteratorPrototype%[Symbol.toStringTag]</code>：'Map Iterator'</li>
+<li class="calibre11"><code class="pcalibre3 pcalibre4 calibre14">%SetIteratorPrototype%[Symbol.toStringTag]</code>：'Set Iterator'</li>
+<li class="calibre11"><code class="pcalibre3 pcalibre4 calibre14">%StringIteratorPrototype%[Symbol.toStringTag]</code>：'String Iterator'</li>
+<li class="calibre11"><code class="pcalibre3 pcalibre4 calibre14">Symbol.prototype[Symbol.toStringTag]</code>：'Symbol'</li>
+<li class="calibre11"><code class="pcalibre3 pcalibre4 calibre14">Generator.prototype[Symbol.toStringTag]</code>：'Generator'</li>
+<li class="calibre11"><code class="pcalibre3 pcalibre4 calibre14">GeneratorFunction.prototype[Symbol.toStringTag]</code>：'GeneratorFunction'</li>
+</ul>
+<h3 id="symbolunscopables" class="calibre12">Symbol.unscopables</h3>
+<p class="calibre7">对象的<code class="pcalibre3 pcalibre4 calibre14">Symbol.unscopables</code>属性，指向一个对象。该对象指定了使用<code class="pcalibre3 pcalibre4 calibre14">with</code>关键字时，哪些属性会被<code class="pcalibre3 pcalibre4 calibre14">with</code>环境排除。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-built_in">Array</span>.prototype[<span class="hljs-built_in">Symbol</span>.unscopables]
+<span class="hljs-comment">// {</span>
+<span class="hljs-comment">//   copyWithin: true,</span>
+<span class="hljs-comment">//   entries: true,</span>
+<span class="hljs-comment">//   fill: true,</span>
+<span class="hljs-comment">//   find: true,</span>
+<span class="hljs-comment">//   findIndex: true,</span>
+<span class="hljs-comment">//   keys: true</span>
+<span class="hljs-comment">// }</span>
+
+<span class="hljs-built_in">Object</span>.keys(<span class="hljs-built_in">Array</span>.prototype[<span class="hljs-built_in">Symbol</span>.unscopables])
+<span class="hljs-comment">// ['copyWithin', 'entries', 'fill', 'find', 'findIndex', 'keys']</span>
+</code></pre>
+<p class="calibre7">上面代码说明，数组有6个属性，会被with命令排除。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-comment">// 没有unscopables时</span>
+<span class="hljs-operator"><span class="hljs-keyword">class</span> <span class="hljs-comment">MyClass</span> </span>{
+  foo() { <span class="hljs-keyword">return</span> <span class="hljs-built_in">1</span>; }
+}
+
+<span class="hljs-keyword">var</span> foo = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-built_in"></span>) </span>{ <span class="hljs-keyword">return</span> <span class="hljs-built_in">2</span>; };
+
+<span class="hljs-keyword">with</span> (MyClass.prototype) {
+  foo(); <span class="hljs-comment">// 1</span>
+}
+
+<span class="hljs-comment">// 有unscopables时</span>
+<span class="hljs-operator"><span class="hljs-keyword">class</span> <span class="hljs-comment">MyClass</span> </span>{
+  foo() { <span class="hljs-keyword">return</span> <span class="hljs-built_in">1</span>; }
+  get [<span class="hljs-built_in">Symbol</span>.unscopables]() {
+    <span class="hljs-keyword">return</span> { foo: <span class="hljs-built_in">true</span> };
+  }
+}
+
+<span class="hljs-keyword">var</span> foo = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-built_in"></span>) </span>{ <span class="hljs-keyword">return</span> <span class="hljs-built_in">2</span>; };
+
+<span class="hljs-keyword">with</span> (MyClass.prototype) {
+  foo(); <span class="hljs-comment">// 2</span>
+}
+</code></pre>
+
+            
+            </div>
+        
+    
+</div>
+
+        
+        
+    
+    
+
+</body></html>

@@ -1,0 +1,488 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+  <head>
+    <title>变量的解构赋值 | ECMAScript 6入门</title>
+    <meta name="description" content=""/>
+    <meta name="generator" content="GitBook 2.6.7"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="page_styles.css" rel="stylesheet" type="text/css"/>
+</head>
+  <body class="dir">
+        
+        
+<div class="page">
+    
+        <h1 class="book-chapter" id="calibre_toc_4">变量的解构赋值</h1>
+        
+            <div class="section" id="section-">
+            
+                <h1 id="变量的解构赋值" class="calibre6">变量的解构赋值</h1>
+<h2 id="数组的解构赋值" class="calibre18">数组的解构赋值</h2>
+<h3 id="基本用法" class="calibre12">基本用法</h3>
+<p class="calibre7">ES6允许按照一定模式，从数组和对象中提取值，对变量进行赋值，这被称为解构（Destructuring）。</p>
+<p class="calibre7">以前，为变量赋值，只能直接指定值。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-keyword">var</span> a = <span class="hljs-built_in">1</span>;
+<span class="hljs-keyword">var</span> b = <span class="hljs-built_in">2</span>;
+<span class="hljs-keyword">var</span> c = <span class="hljs-built_in">3</span>;
+</code></pre>
+<p class="calibre7">ES6允许写成下面这样。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-keyword">var</span> [a, b, c] = [<span class="hljs-built_in">1</span>, <span class="hljs-built_in">2</span>, <span class="hljs-built_in">3</span>];
+</code></pre>
+<p class="calibre7">上面代码表示，可以从数组中提取值，按照对应位置，对变量赋值。</p>
+<p class="calibre7">本质上，这种写法属于“模式匹配”，只要等号两边的模式相同，左边的变量就会被赋予对应的值。下面是一些使用嵌套数组进行解构的例子。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-keyword">let</span> [foo, [[bar], baz]] = [<span class="hljs-built_in">1</span>, [[<span class="hljs-built_in">2</span>], <span class="hljs-built_in">3</span>]];
+foo <span class="hljs-comment">// 1</span>
+bar <span class="hljs-comment">// 2</span>
+baz <span class="hljs-comment">// 3</span>
+
+<span class="hljs-keyword">let</span> [ , , third] = [<span class="hljs-string">"foo"</span>, <span class="hljs-string">"bar"</span>, <span class="hljs-string">"baz"</span>];
+third <span class="hljs-comment">// "baz"</span>
+
+<span class="hljs-keyword">let</span> [x, , y] = [<span class="hljs-built_in">1</span>, <span class="hljs-built_in">2</span>, <span class="hljs-built_in">3</span>];
+x <span class="hljs-comment">// 1</span>
+y <span class="hljs-comment">// 3</span>
+
+<span class="hljs-keyword">let</span> [head, ...tail] = [<span class="hljs-built_in">1</span>, <span class="hljs-built_in">2</span>, <span class="hljs-built_in">3</span>, <span class="hljs-built_in">4</span>];
+head <span class="hljs-comment">// 1</span>
+tail <span class="hljs-comment">// [2, 3, 4]</span>
+
+<span class="hljs-keyword">let</span> [x, y, ...z] = [<span class="hljs-string">'a'</span>];
+x <span class="hljs-comment">// "a"</span>
+y <span class="hljs-comment">// undefined</span>
+z <span class="hljs-comment">// []</span>
+</code></pre>
+<p class="calibre7">如果解构不成功，变量的值就等于<code class="pcalibre3 pcalibre4 calibre14">undefined</code>。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-keyword">var</span> [foo] = [];
+<span class="hljs-keyword">var</span> [bar, foo] = [<span class="hljs-built_in">1</span>];
+</code></pre>
+<p class="calibre7">以上两种情况都属于解构不成功，<code class="pcalibre3 pcalibre4 calibre14">foo</code>的值都会等于<code class="pcalibre3 pcalibre4 calibre14">undefined</code>。</p>
+<p class="calibre7">另一种情况是不完全解构，即等号左边的模式，只匹配一部分的等号右边的数组。这种情况下，解构依然可以成功。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-keyword">let</span> [x, y] = [<span class="hljs-built_in">1</span>, <span class="hljs-built_in">2</span>, <span class="hljs-built_in">3</span>];
+x <span class="hljs-comment">// 1</span>
+y <span class="hljs-comment">// 2</span>
+
+<span class="hljs-keyword">let</span> [a, [b], d] = [<span class="hljs-built_in">1</span>, [<span class="hljs-built_in">2</span>, <span class="hljs-built_in">3</span>], <span class="hljs-built_in">4</span>];
+a <span class="hljs-comment">// 1</span>
+b <span class="hljs-comment">// 2</span>
+d <span class="hljs-comment">// 4</span>
+</code></pre>
+<p class="calibre7">上面两个例子，都属于不完全解构，但是可以成功。</p>
+<p class="calibre7">如果等号的右边不是数组（或者严格地说，不是可遍历的结构，参见《Iterator》一章），那么将会报错。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-comment">// 报错</span>
+<span class="hljs-keyword">let</span> [foo] = <span class="hljs-built_in">1</span>;
+<span class="hljs-keyword">let</span> [foo] = <span class="hljs-built_in">false</span>;
+<span class="hljs-keyword">let</span> [foo] = <span class="hljs-built_in">NaN</span>;
+<span class="hljs-keyword">let</span> [foo] = <span class="hljs-built_in">undefined</span>;
+<span class="hljs-keyword">let</span> [foo] = <span class="hljs-built_in">null</span>;
+<span class="hljs-keyword">let</span> [foo] = {};
+</code></pre>
+<p class="calibre7">上面的表达式都会报错，因为等号右边的值，要么转为对象以后不具备Iterator接口（前五个表达式），要么本身就不具备Iterator接口（最后一个表达式）。</p>
+<p class="calibre7">解构赋值不仅适用于var命令，也适用于let和const命令。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-keyword">var</span> [v1, v2, ..., vN ] = array;
+<span class="hljs-keyword">let</span> [v1, v2, ..., vN ] = array;
+<span class="hljs-keyword">const</span> [v1, v2, ..., vN ] = array;
+</code></pre>
+<p class="calibre7">对于Set结构，也可以使用数组的解构赋值。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-keyword">let</span> [x, y, z] = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Set</span>([<span class="hljs-string">"a"</span>, <span class="hljs-string">"b"</span>, <span class="hljs-string">"c"</span>]);
+x <span class="hljs-comment">// "a"</span>
+</code></pre>
+<p class="calibre7">事实上，只要某种数据结构具有Iterator接口，都可以采用数组形式的解构赋值。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-function"><span class="hljs-keyword">function</span>* <span class="hljs-comment">fibs</span>(<span class="hljs-built_in"></span>) </span>{
+  <span class="hljs-keyword">var</span> a = <span class="hljs-built_in">0</span>;
+  <span class="hljs-keyword">var</span> b = <span class="hljs-built_in">1</span>;
+  <span class="hljs-keyword">while</span> (<span class="hljs-built_in">true</span>) {
+    <span class="hljs-keyword">yield</span> a;
+    [a, b] = [b, a + b];
+  }
+}
+
+<span class="hljs-keyword">var</span> [first, second, third, fourth, fifth, sixth] = fibs();
+sixth <span class="hljs-comment">// 5</span>
+</code></pre>
+<p class="calibre7">上面代码中，<code class="pcalibre3 pcalibre4 calibre14">fibs</code>是一个Generator函数，原生具有Iterator接口。解构赋值会依次从这个接口获取值。</p>
+<h3 id="默认值" class="calibre12">默认值</h3>
+<p class="calibre7">解构赋值允许指定默认值。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-keyword">var</span> [foo = <span class="hljs-built_in">true</span>] = [];
+foo <span class="hljs-comment">// true</span>
+
+[x, y = <span class="hljs-string">'b'</span>] = [<span class="hljs-string">'a'</span>]; <span class="hljs-comment">// x='a', y='b'</span>
+[x, y = <span class="hljs-string">'b'</span>] = [<span class="hljs-string">'a'</span>, <span class="hljs-built_in">undefined</span>]; <span class="hljs-comment">// x='a', y='b'</span>
+</code></pre>
+<p class="calibre7">注意，ES6内部使用严格相等运算符（<code class="pcalibre3 pcalibre4 calibre14">===</code>），判断一个位置是否有值。所以，如果一个数组成员不严格等于<code class="pcalibre3 pcalibre4 calibre14">undefined</code>，默认值是不会生效的。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-keyword">var</span> [x = <span class="hljs-built_in">1</span>] = [<span class="hljs-built_in">undefined</span>];
+x <span class="hljs-comment">// 1</span>
+
+<span class="hljs-keyword">var</span> [x = <span class="hljs-built_in">1</span>] = [<span class="hljs-built_in">null</span>];
+x <span class="hljs-comment">// null</span>
+</code></pre>
+<p class="calibre7">上面代码中，如果一个数组成员是<code class="pcalibre3 pcalibre4 calibre14">null</code>，默认值就不会生效，因为<code class="pcalibre3 pcalibre4 calibre14">null</code>不严格等于<code class="pcalibre3 pcalibre4 calibre14">undefined</code>。</p>
+<p class="calibre7">如果默认值是一个表达式，那么这个表达式是惰性求值的，即只有在用到的时候，才会求值。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-comment">f</span>(<span class="hljs-built_in"></span>) </span>{
+  <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'aaa'</span>);
+}
+
+<span class="hljs-keyword">let</span> [x = f()] = [<span class="hljs-built_in">1</span>];
+</code></pre>
+<p class="calibre7">上面代码中，因为<code class="pcalibre3 pcalibre4 calibre14">x</code>能取到值，所以函数<code class="pcalibre3 pcalibre4 calibre14">f</code>根本不会执行。上面的代码其实等价于下面的代码。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-keyword">let</span> x;
+<span class="hljs-keyword">if</span> ([<span class="hljs-built_in">1</span>][<span class="hljs-built_in">0</span>] === <span class="hljs-built_in">undefined</span>) {
+  x = f();
+} <span class="hljs-keyword">else</span> {
+  x = [<span class="hljs-built_in">1</span>][<span class="hljs-built_in">0</span>];
+}
+</code></pre>
+<p class="calibre7">默认值可以引用解构赋值的其他变量，但该变量必须已经声明。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-keyword">let</span> [x = <span class="hljs-built_in">1</span>, y = x] = [];     <span class="hljs-comment">// x=1; y=1</span>
+<span class="hljs-keyword">let</span> [x = <span class="hljs-built_in">1</span>, y = x] = [<span class="hljs-built_in">2</span>];    <span class="hljs-comment">// x=2; y=2</span>
+<span class="hljs-keyword">let</span> [x = <span class="hljs-built_in">1</span>, y = x] = [<span class="hljs-built_in">1</span>, <span class="hljs-built_in">2</span>]; <span class="hljs-comment">// x=1; y=2</span>
+<span class="hljs-keyword">let</span> [x = y, y = <span class="hljs-built_in">1</span>] = [];     <span class="hljs-comment">// ReferenceError</span>
+</code></pre>
+<p class="calibre7">上面最后一个表达式之所以会报错，是因为<code class="pcalibre3 pcalibre4 calibre14">x</code>用到默认值<code class="pcalibre3 pcalibre4 calibre14">y</code>时，<code class="pcalibre3 pcalibre4 calibre14">y</code>还没有声明。</p>
+<h2 id="对象的解构赋值" class="calibre13">对象的解构赋值</h2>
+<p class="calibre7">解构不仅可以用于数组，还可以用于对象。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-keyword">var</span> { foo, bar } = { foo: <span class="hljs-string">"aaa"</span>, bar: <span class="hljs-string">"bbb"</span> };
+foo <span class="hljs-comment">// "aaa"</span>
+bar <span class="hljs-comment">// "bbb"</span>
+</code></pre>
+<p class="calibre7">对象的解构与数组有一个重要的不同。数组的元素是按次序排列的，变量的取值由它的位置决定；而对象的属性没有次序，变量必须与属性同名，才能取到正确的值。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-keyword">var</span> { bar, foo } = { foo: <span class="hljs-string">"aaa"</span>, bar: <span class="hljs-string">"bbb"</span> };
+foo <span class="hljs-comment">// "aaa"</span>
+bar <span class="hljs-comment">// "bbb"</span>
+
+<span class="hljs-keyword">var</span> { baz } = { foo: <span class="hljs-string">"aaa"</span>, bar: <span class="hljs-string">"bbb"</span> };
+baz <span class="hljs-comment">// undefined</span>
+</code></pre>
+<p class="calibre7">上面代码的第一个例子，等号左边的两个变量的次序，与等号右边两个同名属性的次序不一致，但是对取值完全没有影响。第二个例子的变量没有对应的同名属性，导致取不到值，最后等于<code class="pcalibre3 pcalibre4 calibre14">undefined</code>。</p>
+<p class="calibre7">如果变量名与属性名不一致，必须写成下面这样。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-keyword">var</span> { foo: baz } = { foo: <span class="hljs-string">"aaa"</span>, bar: <span class="hljs-string">"bbb"</span> };
+baz <span class="hljs-comment">// "aaa"</span>
+
+<span class="hljs-keyword">let</span> obj = { first: <span class="hljs-string">'hello'</span>, last: <span class="hljs-string">'world'</span> };
+<span class="hljs-keyword">let</span> { first: f, last: l } = obj;
+f <span class="hljs-comment">// 'hello'</span>
+l <span class="hljs-comment">// 'world'</span>
+</code></pre>
+<p class="calibre7">这实际上说明，对象的解构赋值是下面形式的简写（参见《对象的扩展》一章）。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-keyword">var</span> { foo: foo, bar: bar } = { foo: <span class="hljs-string">"aaa"</span>, bar: <span class="hljs-string">"bbb"</span> };
+</code></pre>
+<p class="calibre7">也就是说，对象的解构赋值的内部机制，是先找到同名属性，然后再赋给对应的变量。真正被赋值的是后者，而不是前者。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-keyword">var</span> { foo: baz } = { foo: <span class="hljs-string">"aaa"</span>, bar: <span class="hljs-string">"bbb"</span> };
+baz <span class="hljs-comment">// "aaa"</span>
+foo <span class="hljs-comment">// error: foo is not defined</span>
+</code></pre>
+<p class="calibre7">上面代码中，真正被赋值的是变量<code class="pcalibre3 pcalibre4 calibre14">baz</code>，而不是模式<code class="pcalibre3 pcalibre4 calibre14">foo</code>。</p>
+<p class="calibre7">注意，采用这种写法时，变量的声明和赋值是一体的。对于let和const来说，变量不能重新声明，所以一旦赋值的变量以前声明过，就会报错。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-keyword">let</span> foo;
+<span class="hljs-keyword">let</span> {foo} = {foo: <span class="hljs-built_in">1</span>}; <span class="hljs-comment">// SyntaxError: Duplicate declaration "foo"</span>
+
+<span class="hljs-keyword">let</span> baz;
+<span class="hljs-keyword">let</span> {bar: baz} = {bar: <span class="hljs-built_in">1</span>}; <span class="hljs-comment">// SyntaxError: Duplicate declaration "baz"</span>
+</code></pre>
+<p class="calibre7">上面代码中，解构赋值的变量都会重新声明，所以报错了。不过，因为<code class="pcalibre3 pcalibre4 calibre14">var</code>命令允许重新声明，所以这个错误只会在使用<code class="pcalibre3 pcalibre4 calibre14">let</code>和<code class="pcalibre3 pcalibre4 calibre14">const</code>命令时出现。如果没有第二个let命令，上面的代码就不会报错。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-keyword">let</span> foo;
+({foo} = {foo: <span class="hljs-built_in">1</span>}); <span class="hljs-comment">// 成功</span>
+
+<span class="hljs-keyword">let</span> baz;
+({bar: baz} = {bar: <span class="hljs-built_in">1</span>}); <span class="hljs-comment">// 成功</span>
+</code></pre>
+<p class="calibre7">和数组一样，解构也可以用于嵌套结构的对象。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-keyword">var</span> obj = {
+  p: [
+    <span class="hljs-string">"Hello"</span>,
+    { y: <span class="hljs-string">"World"</span> }
+  ]
+};
+
+<span class="hljs-keyword">var</span> { p: [x, { y }] } = obj;
+x <span class="hljs-comment">// "Hello"</span>
+y <span class="hljs-comment">// "World"</span>
+</code></pre>
+<p class="calibre7">注意，这时<code class="pcalibre3 pcalibre4 calibre14">p</code>是模式，不是变量，因此不会被赋值。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-keyword">var</span> node = {
+  loc: {
+    start: {
+      line: <span class="hljs-built_in">1</span>,
+      column: <span class="hljs-built_in">5</span>
+    }
+  }
+};
+
+<span class="hljs-keyword">var</span> { loc: { start: { line }} } = node;
+line <span class="hljs-comment">// 1</span>
+loc  <span class="hljs-comment">// error: loc is undefined</span>
+start <span class="hljs-comment">// error: start is undefined</span>
+</code></pre>
+<p class="calibre7">上面代码中，只有<code class="pcalibre3 pcalibre4 calibre14">line</code>是变量，<code class="pcalibre3 pcalibre4 calibre14">loc</code>和<code class="pcalibre3 pcalibre4 calibre14">start</code>都是模式，不会被赋值。</p>
+<p class="calibre7">下面是嵌套赋值的例子。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-keyword">let</span> obj = {};
+<span class="hljs-keyword">let</span> arr = [];
+
+({ foo: obj.prop, bar: arr[<span class="hljs-built_in">0</span>] } = { foo: <span class="hljs-built_in">123</span>, bar: <span class="hljs-built_in">true</span> });
+
+obj <span class="hljs-comment">// {prop:123}</span>
+arr <span class="hljs-comment">// [true]</span>
+</code></pre>
+<p class="calibre7">对象的解构也可以指定默认值。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-keyword">var</span> {x = <span class="hljs-built_in">3</span>} = {};
+x <span class="hljs-comment">// 3</span>
+
+<span class="hljs-keyword">var</span> {x, y = <span class="hljs-built_in">5</span>} = {x: <span class="hljs-built_in">1</span>};
+x <span class="hljs-comment">// 1</span>
+y <span class="hljs-comment">// 5</span>
+
+<span class="hljs-keyword">var</span> { message: msg = <span class="hljs-string">"Something went wrong"</span> } = {};
+msg <span class="hljs-comment">// "Something went wrong"</span>
+</code></pre>
+<p class="calibre7">默认值生效的条件是，对象的属性值严格等于<code class="pcalibre3 pcalibre4 calibre14">undefined</code>。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-keyword">var</span> {x = <span class="hljs-built_in">3</span>} = {x: <span class="hljs-built_in">undefined</span>};
+x <span class="hljs-comment">// 3</span>
+
+<span class="hljs-keyword">var</span> {x = <span class="hljs-built_in">3</span>} = {x: <span class="hljs-built_in">null</span>};
+x <span class="hljs-comment">// null</span>
+</code></pre>
+<p class="calibre7">上面代码中，如果<code class="pcalibre3 pcalibre4 calibre14">x</code>属性等于<code class="pcalibre3 pcalibre4 calibre14">null</code>，就不严格相等于<code class="pcalibre3 pcalibre4 calibre14">undefined</code>，导致默认值不会生效。</p>
+<p class="calibre7">如果解构失败，变量的值等于<code class="pcalibre3 pcalibre4 calibre14">undefined</code>。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-keyword">var</span> {foo} = {bar: <span class="hljs-string">'baz'</span>};
+foo <span class="hljs-comment">// undefined</span>
+</code></pre>
+<p class="calibre7">如果解构模式是嵌套的对象，而且子对象所在的父属性不存在，那么将会报错。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-comment">// 报错</span>
+<span class="hljs-keyword">var</span> {foo: {bar}} = {baz: <span class="hljs-string">'baz'</span>};
+</code></pre>
+<p class="calibre7">上面代码中，等号左边对象的<code class="pcalibre3 pcalibre4 calibre14">foo</code>属性，对应一个子对象。该子对象的<code class="pcalibre3 pcalibre4 calibre14">bar</code>属性，解构时会报错。原因很简单，因为<code class="pcalibre3 pcalibre4 calibre14">foo</code>这时等于<code class="pcalibre3 pcalibre4 calibre14">undefined</code>，再取子属性就会报错，请看下面的代码。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-keyword">var</span> _tmp = {baz: <span class="hljs-string">'baz'</span>};
+_tmp.foo.bar <span class="hljs-comment">// 报错</span>
+</code></pre>
+<p class="calibre7">如果要将一个已经声明的变量用于解构赋值，必须非常小心。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-comment">// 错误的写法</span>
+
+<span class="hljs-keyword">var</span> x;
+{x} = {x: <span class="hljs-built_in">1</span>};
+<span class="hljs-comment">// SyntaxError: syntax error</span>
+</code></pre>
+<p class="calibre7">上面代码的写法会报错，因为JavaScript引擎会将<code class="pcalibre3 pcalibre4 calibre14">{x}</code>理解成一个代码块，从而发生语法错误。只有不将大括号写在行首，避免JavaScript将其解释为代码块，才能解决这个问题。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-comment">// 正确的写法</span>
+({x} = {x: <span class="hljs-built_in">1</span>});
+</code></pre>
+<p class="calibre7">上面代码将整个解构赋值语句，放在一个圆括号里面，就可以正确执行。关于圆括号与解构赋值的关系，参见下文。</p>
+<p class="calibre7">解构赋值允许，等号左边的模式之中，不放置任何变量名。因此，可以写出非常古怪的赋值表达式。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6">({} = [<span class="hljs-built_in">true</span>, <span class="hljs-built_in">false</span>]);
+({} = <span class="hljs-string">'abc'</span>);
+({} = []);
+</code></pre>
+<p class="calibre7">上面的表达式虽然毫无意义，但是语法是合法的，可以执行。</p>
+<p class="calibre7">对象的解构赋值，可以很方便地将现有对象的方法，赋值到某个变量。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-keyword">let</span> { log, sin, cos } = <span class="hljs-built_in">Math</span>;
+</code></pre>
+<p class="calibre7">上面代码将<code class="pcalibre3 pcalibre4 calibre14">Math</code>对象的对数、正弦、余弦三个方法，赋值到对应的变量上，使用起来就会方便很多。</p>
+<h2 id="字符串的解构赋值" class="calibre13">字符串的解构赋值</h2>
+<p class="calibre7">字符串也可以解构赋值。这是因为此时，字符串被转换成了一个类似数组的对象。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-keyword">const</span> [a, b, c, d, e] = <span class="hljs-string">'hello'</span>;
+a <span class="hljs-comment">// "h"</span>
+b <span class="hljs-comment">// "e"</span>
+c <span class="hljs-comment">// "l"</span>
+d <span class="hljs-comment">// "l"</span>
+e <span class="hljs-comment">// "o"</span>
+</code></pre>
+<p class="calibre7">类似数组的对象都有一个<code class="pcalibre3 pcalibre4 calibre14">length</code>属性，因此还可以对这个属性解构赋值。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-keyword">let</span> {length : len} = <span class="hljs-string">'hello'</span>;
+len <span class="hljs-comment">// 5</span>
+</code></pre>
+<h2 id="数值和布尔值的解构赋值" class="calibre13">数值和布尔值的解构赋值</h2>
+<p class="calibre7">解构赋值时，如果等号右边是数值和布尔值，则会先转为对象。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-keyword">let</span> {toString: s} = <span class="hljs-built_in">123</span>;
+s === <span class="hljs-built_in">Number</span>.prototype.toString <span class="hljs-comment">// true</span>
+
+<span class="hljs-keyword">let</span> {toString: s} = <span class="hljs-built_in">true</span>;
+s === <span class="hljs-built_in">Boolean</span>.prototype.toString <span class="hljs-comment">// true</span>
+</code></pre>
+<p class="calibre7">上面代码中，数值和布尔值的包装对象都有<code class="pcalibre3 pcalibre4 calibre14">toString</code>属性，因此变量<code class="pcalibre3 pcalibre4 calibre14">s</code>都能取到值。</p>
+<p class="calibre7">解构赋值的规则是，只要等号右边的值不是对象，就先将其转为对象。由于<code class="pcalibre3 pcalibre4 calibre14">undefined</code>和<code class="pcalibre3 pcalibre4 calibre14">null</code>无法转为对象，所以对它们进行解构赋值，都会报错。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-keyword">let</span> { prop: x } = <span class="hljs-built_in">undefined</span>; <span class="hljs-comment">// TypeError</span>
+<span class="hljs-keyword">let</span> { prop: y } = <span class="hljs-built_in">null</span>; <span class="hljs-comment">// TypeError</span>
+</code></pre>
+<h2 id="函数参数的解构赋值" class="calibre13">函数参数的解构赋值</h2>
+<p class="calibre7">函数的参数也可以使用解构赋值。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-comment">add</span>(<span class="hljs-built_in">[x, y]</span>)</span>{
+  <span class="hljs-keyword">return</span> x + y;
+}
+
+add([<span class="hljs-built_in">1</span>, <span class="hljs-built_in">2</span>]); <span class="hljs-comment">// 3</span>
+</code></pre>
+<p class="calibre7">上面代码中，函数<code class="pcalibre3 pcalibre4 calibre14">add</code>的参数表面上是一个数组，但在传入参数的那一刻，数组参数就被解构成变量<code class="pcalibre3 pcalibre4 calibre14">x</code>和<code class="pcalibre3 pcalibre4 calibre14">y</code>。对于函数内部的代码来说，它们能感受到的参数就是<code class="pcalibre3 pcalibre4 calibre14">x</code>和<code class="pcalibre3 pcalibre4 calibre14">y</code>。</p>
+<p class="calibre7">下面是另一个例子。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6">[[<span class="hljs-built_in">1</span>, <span class="hljs-built_in">2</span>], [<span class="hljs-built_in">3</span>, <span class="hljs-built_in">4</span>]].map(([a, b]) =&gt; a + b);
+<span class="hljs-comment">// [ 3, 7 ]</span>
+</code></pre>
+<p class="calibre7">函数参数的解构也可以使用默认值。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-comment">move</span>(<span class="hljs-built_in">{x = 0, y = 0} = {}</span>) </span>{
+  <span class="hljs-keyword">return</span> [x, y];
+}
+
+move({x: <span class="hljs-built_in">3</span>, y: <span class="hljs-built_in">8</span>}); <span class="hljs-comment">// [3, 8]</span>
+move({x: <span class="hljs-built_in">3</span>}); <span class="hljs-comment">// [3, 0]</span>
+move({}); <span class="hljs-comment">// [0, 0]</span>
+move(); <span class="hljs-comment">// [0, 0]</span>
+</code></pre>
+<p class="calibre7">上面代码中，函数<code class="pcalibre3 pcalibre4 calibre14">move</code>的参数是一个对象，通过对这个对象进行解构，得到变量<code class="pcalibre3 pcalibre4 calibre14">x</code>和<code class="pcalibre3 pcalibre4 calibre14">y</code>的值。如果解构失败，<code class="pcalibre3 pcalibre4 calibre14">x</code>和<code class="pcalibre3 pcalibre4 calibre14">y</code>等于默认值。</p>
+<p class="calibre7">注意，下面的写法会得到不一样的结果。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-comment">move</span>(<span class="hljs-built_in">{x, y} = { x: 0, y: 0 }</span>) </span>{
+  <span class="hljs-keyword">return</span> [x, y];
+}
+
+move({x: <span class="hljs-built_in">3</span>, y: <span class="hljs-built_in">8</span>}); <span class="hljs-comment">// [3, 8]</span>
+move({x: <span class="hljs-built_in">3</span>}); <span class="hljs-comment">// [3, undefined]</span>
+move({}); <span class="hljs-comment">// [undefined, undefined]</span>
+move(); <span class="hljs-comment">// [0, 0]</span>
+</code></pre>
+<p class="calibre7">上面代码是为函数<code class="pcalibre3 pcalibre4 calibre14">move</code>的参数指定默认值，而不是为变量<code class="pcalibre3 pcalibre4 calibre14">x</code>和<code class="pcalibre3 pcalibre4 calibre14">y</code>指定默认值，所以会得到与前一种写法不同的结果。</p>
+<p class="calibre7"><code class="pcalibre3 pcalibre4 calibre14">undefined</code>就会触发函数参数的默认值。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6">[<span class="hljs-built_in">1</span>, <span class="hljs-built_in">undefined</span>, <span class="hljs-built_in">3</span>].map((x = <span class="hljs-string">'yes'</span>) =&gt; x);
+<span class="hljs-comment">// [ 1, 'yes', 3 ]</span>
+</code></pre>
+<h2 id="圆括号问题" class="calibre13">圆括号问题</h2>
+<p class="calibre7">解构赋值虽然很方便，但是解析起来并不容易。对于编译器来说，一个式子到底是模式，还是表达式，没有办法从一开始就知道，必须解析到（或解析不到）等号才能知道。</p>
+<p class="calibre7">由此带来的问题是，如果模式中出现圆括号怎么处理。ES6的规则是，只要有可能导致解构的歧义，就不得使用圆括号。</p>
+<p class="calibre7">但是，这条规则实际上不那么容易辨别，处理起来相当麻烦。因此，建议只要有可能，就不要在模式中放置圆括号。</p>
+<h3 id="不能使用圆括号的情况" class="calibre12">不能使用圆括号的情况</h3>
+<p class="calibre7">以下三种解构赋值不得使用圆括号。</p>
+<p class="calibre7">（1）变量声明语句中，不能带有圆括号。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-comment">// 全部报错</span>
+<span class="hljs-keyword">var</span> [(a)] = [<span class="hljs-built_in">1</span>];
+
+<span class="hljs-keyword">var</span> {x: (c)} = {};
+<span class="hljs-keyword">var</span> ({x: c}) = {};
+<span class="hljs-keyword">var</span> {(x: c)} = {};
+<span class="hljs-keyword">var</span> {(x): c} = {};}
+
+<span class="hljs-keyword">var</span> { o: ({ p: p }) } = { o: { p: <span class="hljs-built_in">2</span> } };
+</code></pre>
+<p class="calibre7">上面三个语句都会报错，因为它们都是变量声明语句，模式不能使用圆括号。</p>
+<p class="calibre7">（2）函数参数中，模式不能带有圆括号。</p>
+<p class="calibre7">函数参数也属于变量声明，因此不能带有圆括号。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-comment">// 报错</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-comment">f</span>(<span class="hljs-built_in">[(z</span>)]) </span>{ <span class="hljs-keyword">return</span> z; }
+</code></pre>
+<p class="calibre7">（3）赋值语句中，不能将整个模式，或嵌套模式中的一层，放在圆括号之中。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-comment">// 全部报错</span>
+({ p: a }) = { p: <span class="hljs-built_in">42</span> };
+([a]) = [<span class="hljs-built_in">5</span>];
+</code></pre>
+<p class="calibre7">上面代码将整个模式放在模式之中，导致报错。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-comment">// 报错</span>
+[({ p: a }), { x: c }] = [{}, {}];
+</code></pre>
+<p class="calibre7">上面代码将嵌套模式的一层，放在圆括号之中，导致报错。</p>
+<h3 id="可以使用圆括号的情况" class="calibre12">可以使用圆括号的情况</h3>
+<p class="calibre7">可以使用圆括号的情况只有一种：赋值语句的非模式部分，可以使用圆括号。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6">[(b)] = [<span class="hljs-built_in">3</span>]; <span class="hljs-comment">// 正确</span>
+({ p: (d) } = {}); <span class="hljs-comment">// 正确</span>
+[(<span class="hljs-built_in">parseInt</span>.prop)] = [<span class="hljs-built_in">3</span>]; <span class="hljs-comment">// 正确</span>
+</code></pre>
+<p class="calibre7">上面三行语句都可以正确执行，因为首先它们都是赋值语句，而不是声明语句；其次它们的圆括号都不属于模式的一部分。第一行语句中，模式是取数组的第一个成员，跟圆括号无关；第二行语句中，模式是p，而不是d；第三行语句与第一行语句的性质一致。</p>
+<h2 id="用途" class="calibre13">用途</h2>
+<p class="calibre7">变量的解构赋值用途很多。</p>
+<p class="calibre7"><strong class="calibre17">（1）交换变量的值</strong></p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6">[x, y] = [y, x];
+</code></pre>
+<p class="calibre7">上面代码交换变量x和y的值，这样的写法不仅简洁，而且易读，语义非常清晰。</p>
+<p class="calibre7"><strong class="calibre17">（2）从函数返回多个值</strong></p>
+<p class="calibre7">函数只能返回一个值，如果要返回多个值，只能将它们放在数组或对象里返回。有了解构赋值，取出这些值就非常方便。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-comment">// 返回一个数组</span>
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-comment">example</span>(<span class="hljs-built_in"></span>) </span>{
+  <span class="hljs-keyword">return</span> [<span class="hljs-built_in">1</span>, <span class="hljs-built_in">2</span>, <span class="hljs-built_in">3</span>];
+}
+<span class="hljs-keyword">var</span> [a, b, c] = example();
+
+<span class="hljs-comment">// 返回一个对象</span>
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-comment">example</span>(<span class="hljs-built_in"></span>) </span>{
+  <span class="hljs-keyword">return</span> {
+    foo: <span class="hljs-built_in">1</span>,
+    bar: <span class="hljs-built_in">2</span>
+  };
+}
+<span class="hljs-keyword">var</span> { foo, bar } = example();
+</code></pre>
+<p class="calibre7"><strong class="calibre17">（3）函数参数的定义</strong></p>
+<p class="calibre7">解构赋值可以方便地将一组参数与变量名对应起来。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-comment">// 参数是一组有次序的值</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-comment">f</span>(<span class="hljs-built_in">[x, y, z]</span>) </span>{ ... }
+f([<span class="hljs-built_in">1</span>, <span class="hljs-built_in">2</span>, <span class="hljs-built_in">3</span>]);
+
+<span class="hljs-comment">// 参数是一组无次序的值</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-comment">f</span>(<span class="hljs-built_in">{x, y, z}</span>) </span>{ ... }
+f({z: <span class="hljs-built_in">3</span>, y: <span class="hljs-built_in">2</span>, x: <span class="hljs-built_in">1</span>});
+</code></pre>
+<p class="calibre7"><strong class="calibre17">（4）提取JSON数据</strong></p>
+<p class="calibre7">解构赋值对提取JSON对象中的数据，尤其有用。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-keyword">var</span> jsonData = {
+  id: <span class="hljs-built_in">42</span>,
+  status: <span class="hljs-string">"OK"</span>,
+  data: [<span class="hljs-built_in">867</span>, <span class="hljs-built_in">5309</span>]
+};
+
+<span class="hljs-keyword">let</span> { id, status, data: number } = jsonData;
+
+<span class="hljs-built_in">console</span>.log(id, status, number);
+<span class="hljs-comment">// 42, "OK", [867, 5309]</span>
+</code></pre>
+<p class="calibre7">上面代码可以快速提取JSON数据的值。</p>
+<p class="calibre7"><strong class="calibre17">（5）函数参数的默认值</strong></p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6">
+jQuery.ajax = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-built_in">url, {
+  async = true,
+  beforeSend = function (</span>) </span>{},
+  cache = <span class="hljs-built_in">true</span>,
+  complete = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-built_in"></span>) </span>{},
+  crossDomain = <span class="hljs-built_in">false</span>,
+  global = <span class="hljs-built_in">true</span>,
+  <span class="hljs-comment">// ... more config</span>
+}) {
+  <span class="hljs-comment">// ... do stuff</span>
+};
+</code></pre>
+<p class="calibre7">指定参数的默认值，就避免了在函数体内部再写<code class="pcalibre3 pcalibre4 calibre14">var foo = config.foo || 'default foo';</code>这样的语句。</p>
+<p class="calibre7"><strong class="calibre17">（6）遍历Map结构</strong></p>
+<p class="calibre7">任何部署了Iterator接口的对象，都可以用<code class="pcalibre3 pcalibre4 calibre14">for...of</code>循环遍历。Map结构原生支持Iterator接口，配合变量的解构赋值，获取键名和键值就非常方便。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-keyword">var</span> map = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Map</span>();
+map.set(<span class="hljs-string">'first'</span>, <span class="hljs-string">'hello'</span>);
+map.set(<span class="hljs-string">'second'</span>, <span class="hljs-string">'world'</span>);
+
+<span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> [key, value] <span class="hljs-keyword">of</span> map) {
+  <span class="hljs-built_in">console</span>.log(key + <span class="hljs-string">" is "</span> + value);
+}
+<span class="hljs-comment">// first is hello</span>
+<span class="hljs-comment">// second is world</span>
+</code></pre>
+<p class="calibre7">如果只想获取键名，或者只想获取键值，可以写成下面这样。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-comment">// 获取键名</span>
+<span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> [key] <span class="hljs-keyword">of</span> map) {
+  <span class="hljs-comment">// ...</span>
+}
+
+<span class="hljs-comment">// 获取键值</span>
+<span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> [,value] <span class="hljs-keyword">of</span> map) {
+  <span class="hljs-comment">// ...</span>
+}
+</code></pre>
+<p class="calibre7"><strong class="calibre17">（7）输入模块的指定方法</strong></p>
+<p class="calibre7">加载模块时，往往需要指定输入那些方法。解构赋值使得输入语句非常清晰。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6">
+<span class="hljs-keyword">const</span> { SourceMapConsumer, SourceNode } = <span class="hljs-built_in">require</span>(<span class="hljs-string">"source-map"</span>);
+</code></pre>
+
+            
+            </div>
+        
+    
+</div>
+
+        
+        
+    
+    
+
+</body></html>

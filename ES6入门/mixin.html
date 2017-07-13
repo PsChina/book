@@ -1,0 +1,103 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+  <head>
+    <title>Mixin | ECMAScript 6入门</title>
+    <meta name="description" content=""/>
+    <meta name="generator" content="GitBook 2.6.7"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="page_styles.css" rel="stylesheet" type="text/css"/>
+</head>
+  <body class="dir">
+        
+        
+<div class="page">
+    
+        <h1 class="book-chapter" id="calibre_toc_22">Mixin</h1>
+        
+            <div class="section" id="section-">
+            
+                <h1 id="mixin" class="calibre6">Mixin</h1>
+<p class="calibre7">JavaScript语言的设计是单一继承，即子类只能继承一个父类，不允许继承多个父类。这种设计保证了对象继承的层次结构是树状的，而不是复杂的<a target="_blank" href="https://en.wikipedia.org/wiki/Multiple_inheritance#The_diamond_problem" class="calibre8 pcalibre1 pcalibre2 pcalibre">网状结构</a>。</p>
+<p class="calibre7">但是，这大大降低了编程的灵活性。因为实际开发中，有时不可避免，子类需要继承多个父类。举例来说，“猫”可以继承“哺乳类动物”，也可以继承“宠物”。</p>
+<p class="calibre7">各种单一继承的编程语言，有不同的多重继承解决方案。比如，Java语言也是子类只能继承一个父类，但是还允许继承多个界面（interface），这样就间接实现了多重继承。Interface与父类一样，也是一个类，只不过它只定义接口（method signature），不定义实现，因此又被称为“抽象类”。凡是继承于Interface的方法，都必须自己定义实现，否则就会报错。这样就避免了多重继承的最大问题：多个父类的同名方法的碰撞（naming collision）。</p>
+<p class="calibre7">JavaScript语言没有采用Interface的方案，而是通过代理（delegation）实现了从其他类引入方法。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-keyword">var</span> Enumerable_first = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-built_in"></span>) </span>{
+  <span class="hljs-keyword">this</span>.first = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-built_in"></span>) </span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>[<span class="hljs-built_in">0</span>];
+  };
+};
+
+<span class="hljs-keyword">var</span> list = [<span class="hljs-string">"foo"</span>, <span class="hljs-string">"bar"</span>, <span class="hljs-string">"baz"</span>];
+Enumerable_first.call(list); <span class="hljs-comment">// explicit delegation</span>
+list.first() <span class="hljs-comment">// "foo"</span>
+</code></pre>
+<p class="calibre7">上面代码中，<code class="pcalibre3 pcalibre4 calibre14">list</code>是一个数组，本身并没有<code class="pcalibre3 pcalibre4 calibre14">first</code>方法。通过<code class="pcalibre3 pcalibre4 calibre14">call</code>方法，可以把<code class="pcalibre3 pcalibre4 calibre14">Enumerable_first</code>里面的方法，绑定到<code class="pcalibre3 pcalibre4 calibre14">list</code>，从而<code class="pcalibre3 pcalibre4 calibre14">list</code>就具有<code class="pcalibre3 pcalibre4 calibre14">first</code>方法。这就叫做“代理”（delegation），<code class="pcalibre3 pcalibre4 calibre14">list</code>对象代理了<code class="pcalibre3 pcalibre4 calibre14">Enumerable_first</code>的<code class="pcalibre3 pcalibre4 calibre14">first</code>方法。</p>
+<h2 id="含义" class="calibre13">含义</h2>
+<p class="calibre7">Mixin这个名字来自于冰淇淋，在基本口味的冰淇淋上面混入其他口味，这就叫做Mix-in。</p>
+<p class="calibre7">它允许向一个类里面注入一些代码，使得一个类的功能能够“混入”另一个类。实质上是多重继承的一种解决方案，但是避免了多重继承的复杂性，而且有利于代码复用。</p>
+<p class="calibre7">Mixin就是一个正常的类，不仅定义了接口，还定义了接口的实现。</p>
+<p class="calibre7">子类通过在<code class="pcalibre3 pcalibre4 calibre14">this</code>对象上面绑定方法，达到多重继承的目的。</p>
+<p class="calibre7">很多库提供了Mixin功能。下面以Lodash为例。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-comment">vowels</span>(<span class="hljs-built_in">string</span>) </span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-tag">/[aeiou]/i</span>.test(<span class="hljs-keyword">this</span>.value);
+}
+
+<span class="hljs-keyword">var</span> obj = { value: <span class="hljs-string">'hello'</span> };
+_.mixin(obj, {vowels: vowels})
+obj.vowels() <span class="hljs-comment">// true</span>
+</code></pre>
+<p class="calibre7">上面代码通过Lodash库的<code class="pcalibre3 pcalibre4 calibre14">_.mixin</code>方法，让<code class="pcalibre3 pcalibre4 calibre14">obj</code>对象继承了<code class="pcalibre3 pcalibre4 calibre14">vowels</code>方法。</p>
+<p class="calibre7">Underscore的类似方法是<code class="pcalibre3 pcalibre4 calibre14">_.extend</code>。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-keyword">var</span> Person = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-built_in">fName, lName</span>) </span>{
+  <span class="hljs-keyword">this</span>.firstName = fName;
+  <span class="hljs-keyword">this</span>.lastName = lName;
+}
+
+<span class="hljs-keyword">var</span> sam = <span class="hljs-keyword">new</span> Person(<span class="hljs-string">'Sam'</span>, <span class="hljs-string">'Lowry'</span>);
+
+<span class="hljs-keyword">var</span> NameMixin = {
+  fullName: <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-built_in"></span>) </span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.firstName + <span class="hljs-string">' '</span> + <span class="hljs-keyword">this</span>.lastName;
+  },
+  rename: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-built_in">first, last</span>) </span>{
+    <span class="hljs-keyword">this</span>.firstName = first;
+    <span class="hljs-keyword">this</span>.lastName = last;
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+  }
+};
+_.extend(Person.prototype, NameMixin);
+sam.rename(<span class="hljs-string">'Samwise'</span>, <span class="hljs-string">'Gamgee'</span>);
+sam.fullName() <span class="hljs-comment">// "Samwise Gamgee"</span>
+</code></pre>
+<p class="calibre7">上面代码通过<code class="pcalibre3 pcalibre4 calibre14">_.extend</code>方法，在<code class="pcalibre3 pcalibre4 calibre14">sam</code>对象上面（准确说是它的原型对象<code class="pcalibre3 pcalibre4 calibre14">Person.prototype</code>上面），混入了<code class="pcalibre3 pcalibre4 calibre14">NameMixin</code>类。</p>
+<p class="calibre7"><code class="pcalibre3 pcalibre4 calibre14">extend</code>方法的实现非常简单。</p>
+<pre class="calibre15"><code class="lang-bash pcalibre5 pcalibre6"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-comment">extend</span>(<span class="hljs-built_in">destination, source</span>) </span>{
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> k <span class="hljs-keyword">in</span> source) {
+    <span class="hljs-keyword">if</span> (source.hasOwnProperty(k)) {
+      destination[k] = source[k];
+    }
+  }
+  <span class="hljs-keyword">return</span> destination;
+}
+</code></pre>
+<p class="calibre7">上面代码将<code class="pcalibre3 pcalibre4 calibre14">source</code>对象的所有方法，添加到<code class="pcalibre3 pcalibre4 calibre14">destination</code>对象。</p>
+<h2 id="trait" class="calibre13">Trait</h2>
+<p class="calibre7">Trait是另外一种多重继承的解决方案。它与Mixin很相似，但是有一些细微的差别。</p>
+<ul class="calibre10">
+<li class="calibre11">Mixin可以包含状态（state），Trait不包含，即Trait里面的方法都是互不相干，可以线性包含的。比如，<code class="pcalibre3 pcalibre4 calibre14">Trait1</code>包含方法<code class="pcalibre3 pcalibre4 calibre14">A</code>和<code class="pcalibre3 pcalibre4 calibre14">B</code>，<code class="pcalibre3 pcalibre4 calibre14">Trait2</code>继承了<code class="pcalibre3 pcalibre4 calibre14">Trait1</code>，同时还包含一个自己的方法<code class="pcalibre3 pcalibre4 calibre14">C</code>，实际上就等同于直接包含方法<code class="pcalibre3 pcalibre4 calibre14">A</code>、<code class="pcalibre3 pcalibre4 calibre14">B</code>、<code class="pcalibre3 pcalibre4 calibre14">C</code>。</li>
+<li class="calibre11">对于同名方法的碰撞，Mixin包含了解决规则，Trait则是报错。</li>
+</ul>
+
+            
+            </div>
+        
+    
+</div>
+
+        
+        
+    
+    
+
+</body></html>
