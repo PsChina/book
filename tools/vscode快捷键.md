@@ -1,5 +1,5 @@
 
-#vscode 快捷键
+# vscode 快捷键
 
 按 Press	功能 Function
 
@@ -11,7 +11,7 @@ Ctrl + Shift + N	新窗口/实例 New window/instance
 
 Ctrl + Shift + W	关闭窗口/实例 Close window/instance
 
-##基础编辑 Basic editing
+## 基础编辑 Basic editing
 
 按 Press	功能 Function
 
@@ -67,7 +67,7 @@ Shift+Alt+A	切换块注释 Toggle block comment
 
 Alt+Z	切换换行 Toggle word wrap
 
-##导航 Navigation
+## 导航 Navigation
 
 按 Press	功能 Function
 
@@ -91,7 +91,7 @@ Alt + ←/→	返回/前进 Go back / forward
 
 Ctrl + M	切换选项卡移动焦点 Toggle Tab moves focus
 
-##搜索和替换 Search and replace
+## 搜索和替换 Search and replace
 
 按 Press	功能 Function
 
@@ -109,7 +109,7 @@ Ctrl + K Ctrl + D	将最后一个选择移至下一个查找匹配项 Move last 
 
 Alt + C / R / W	切换区分大小写/正则表达式/整个词 Toggle case-sensitive / regex / whole word
 
-##多光标和选择 Multi-cursor and selection
+## 多光标和选择 Multi-cursor and selection
 
 按 Press	功能 Function
 
@@ -137,7 +137,7 @@ Ctrl + Shift + Alt +（箭头键）	列（框）选择 Column (box) selection
 
 Ctrl + Shift + Alt + PgUp / PgDown	列（框）选择页上/下 Column (box) selection page up/down
 
-##丰富的语言编辑 Rich languages editing
+## 丰富的语言编辑 Rich languages editing
 
 按 Press	功能 Function
 
@@ -169,7 +169,7 @@ Ctrl + K Ctrl + X	修剪尾随空格 Trim trailing whitespace
 
 Ctrl + K M	更改文件语言 Change file language
 
-##编辑器管理 Editor management
+## 编辑器管理 Editor management
 
 按 Press	功能 Function
 
@@ -187,7 +187,7 @@ Ctrl+Shift+PgUp / PgDown	向左/向右移动编辑器 Move editor left/right
 
 Ctrl+K ← / →	移动活动编辑器组 Move active editor group
 
-##文件管理 File management
+## 文件管理 File management
 
 按 Press	功能 Function
 
@@ -219,7 +219,7 @@ Ctrl+K R	显示资源管理器中的活动文件 Reveal active file in Explorer
 
 Ctrl+K O	显示新窗口/实例中的活动文件 Show active file in new window/instance
 
-##显示 Display
+## 显示 Display
 
 按 Press	功能 Function
 
@@ -253,7 +253,7 @@ Ctrl+Shift+V	切换Markdown预览 Toggle Markdown preview
 
 Ctrl+K V	从旁边打开Markdown预览 Open Markdown preview to the side
 
-##调试 Debug
+## 调试 Debug
 
 按 Press	功能 Function
 
@@ -269,7 +269,7 @@ F10	跳过 Step over
 
 Ctrl+K Ctrl+I	显示悬停 Show hover
 
-##集成终端 Integrated terminal
+## 集成终端 Integrated terminal
 
 按 Press	功能 Function
 
